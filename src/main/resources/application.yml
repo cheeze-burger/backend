@@ -1,0 +1,7 @@
+spring:
+  profiles:
+    include: app,cors,database,jpa,jwt,log,oauth,server
+
+  devtools:
+    restart:
+      enabled: true
