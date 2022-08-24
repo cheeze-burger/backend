@@ -1,7 +1,8 @@
 package com.cheezeburger.oauth.domain.member.entity;
 
 import com.cheezeburger.oauth.global.entity.BaseLastModifiedEntity;
-import com.cheezeburger.oauth.global.enums.Role;
+import com.cheezeburger.oauth.global.oauth2.entity.ProviderType;
+import com.cheezeburger.oauth.global.oauth2.entity.Role;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Table(name = "tb_member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@ToString(of = {"seq", "email", "password", "role", "isDeleted"})
+@ToString(of = {"seq", "email", "password", "gender", "ageRange", "role", "providerType", "providerId", "isDeleted"})
 public class Member extends BaseLastModifiedEntity {
 
     @Id
@@ -24,19 +25,20 @@ public class Member extends BaseLastModifiedEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(nullable = false)
-    private String ageRage;
+    @Column
+    private String ageRange;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @Column(nullable = false)
-    private String provider;
+    @Enumerated(EnumType.STRING)
+    private ProviderType providerType;
 
     @Column(nullable = false)
     private String providerId;
@@ -44,14 +46,17 @@ public class Member extends BaseLastModifiedEntity {
     @Column(nullable = false, columnDefinition = "TINYINT")
     private boolean isDeleted;
 
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL, optional = true)
+    private RefreshToken refreshToken;
+
     @Builder
-    public Member(String email, String password, Gender gender, String ageRage, Role role, String provider, String providerId) {
+    public Member(String email, String password, Gender gender, String ageRange, Role role, ProviderType providerType, String providerId) {
         this.email = email;
         this.password = password;
         this.gender = gender;
-        this.ageRage = ageRage;
+        this.ageRange = ageRange;
         this.role = role;
-        this.provider = provider;
+        this.providerType = providerType;
         this.providerId = providerId;
         this.isDeleted = false;
     }
@@ -67,5 +72,9 @@ public class Member extends BaseLastModifiedEntity {
         Gender(String description) {
             this.description = description;
         }
+    }
+
+    public void changeRefreshToken(RefreshToken refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
