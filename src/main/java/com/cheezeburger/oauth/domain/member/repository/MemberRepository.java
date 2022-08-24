@@ -9,11 +9,9 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    boolean existsByEmail(String email);
-
-    @Query("SELECT m FROM Member m WHERE m.seq = :seq AND m.isDeleted = FALSE")
-    Optional<Member> findBySeq(@Param("seq") Long seq);
-
     @Query("SELECT m FROM Member m WHERE m.email = :email AND m.isDeleted = FALSE")
     Optional<Member> findByEmail(@Param("email") String email);
+
+    @Query("SELECT m FROM Member m WHERE m.providerId = :providerId AND m.isDeleted = FALSE")
+    Optional<Member> findByProviderId(@Param("providerId") String providerId);
 }
