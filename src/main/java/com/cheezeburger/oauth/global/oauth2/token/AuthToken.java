@@ -26,14 +26,15 @@ public class AuthToken {
         this.token = createAuthToken(memberSeq, expiry);
     }
 
-    AuthToken(Long memberSeq, String role, Date expiry, Key key) {
+    AuthToken(Long memberSeq, String email, String role, Date expiry, Key key) {
         this.key = key;
-        this.token = createAuthToken(memberSeq, role, expiry);
+        this.token = createAuthToken(memberSeq, email, role, expiry);
     }
 
-    private String createAuthToken(Long memberSeq, String role, Date expiry) {
+    private String createAuthToken(Long memberSeq, String email, String role, Date expiry) {
         return Jwts.builder()
                 .claim("memberSeq", memberSeq)
+                .claim("email", email)
                 .claim(AUTHORITIES_KEY, role)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiry)

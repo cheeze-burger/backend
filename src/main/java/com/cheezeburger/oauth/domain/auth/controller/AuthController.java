@@ -54,6 +54,7 @@ public class AuthController {
         }
 
         Long memberSeq = claims.get("memberSeq", Long.class);
+        String email = claims.get("email", String.class);
         Role role = Role.of(claims.get("role", String.class));
 
         // refresh token
@@ -73,6 +74,7 @@ public class AuthController {
         Date now = new Date();
         AuthToken newAccessToken = tokenProvider.createAuthToken(
                 memberSeq,
+                email,
                 role.getAuthority(),
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
@@ -83,10 +85,7 @@ public class AuthController {
             // refresh 토큰 설정
             long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
 
-            authRefreshToken = tokenProvider.createAuthToken(
-                    memberSeq,
-                    new Date(now.getTime() + refreshTokenExpiry)
-            );
+            authRefreshToken = tokenProvider.createAuthToken(memberSeq, new Date(now.getTime() + refreshTokenExpiry));
 
             // DB에 refresh 토큰 업데이트
             memberRefreshToken.changeToken(authRefreshToken.getToken());

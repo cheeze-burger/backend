@@ -31,8 +31,8 @@ public class AuthTokenProvider {
         return new AuthToken(memberSeq, expiry, key);
     }
 
-    public AuthToken createAuthToken(Long memberSeq, String role, Date expiry) {
-        return new AuthToken(memberSeq, role, expiry, key);
+    public AuthToken createAuthToken(Long memberSeq, String email, String role, Date expiry) {
+        return new AuthToken(memberSeq, email, role, expiry, key);
     }
 
     public AuthToken convertAuthToken(String token) {
@@ -47,8 +47,8 @@ public class AuthTokenProvider {
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
 
-            log.debug("claims subject := [{}]", claims.getSubject());
-            User principal = new User(claims.getSubject(), "", authorities);
+            log.debug("claims=[{}]", claims);
+            User principal = new User(claims.get("email", String.class), "", authorities);
 
             return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
         } else {
